@@ -26,6 +26,18 @@ export class DiagnosticProvider {
 
     public updateDiagnostics(document: vscode.TextDocument): void {
         const diagnostics: vscode.Diagnostic[] = [];
+
+        // parse individual lines
+        const objects = this.mapDocument(document);
+
+
+
+
+
+
+        return;
+
+        // const diagnostics: vscode.Diagnostic[] = [];
         const content = document.getText();
     
         // Validation des blocs item
@@ -47,6 +59,32 @@ export class DiagnosticProvider {
         });
     
         this.diagnosticCollection.set(document.uri, diagnostics);
+    }
+
+
+    private mapDocument(document: vscode.TextDocument):
+    Array<{ 
+        
+     }> 
+    {
+        const objects: Array<{ line: number; text: string }> = [];
+
+        let currentLine = 0;
+        const totalLines = document.lineCount;
+        
+        // sounds like an inefficient way to do this...
+        // use regex like previously instead
+        while (currentLine < totalLines) {
+            const lineText = document.lineAt(currentLine).text;
+            const words = lineText.split(/\s+/);
+            words.forEach(word => {
+                console.debug(`Word: ${word} at line ${currentLine}`);
+            });
+
+            currentLine++;
+        }
+
+        return objects;
     }
     
     private validateItemBlock(match: RegExpMatchArray, document: vscode.TextDocument, diagnostics: vscode.Diagnostic[]): void {

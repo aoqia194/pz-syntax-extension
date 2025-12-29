@@ -14,35 +14,30 @@ function isScriptBlockLine(line: string): string | null {
 }
 
 // check if the position of the doc is within a script block
-export function getBlockType(document: TextDocument, position: Position): string | null {
-    let currentLine = position.line;
+export function getBlockType(document: TextDocument, lineNumber: number): string | null {
+    let currentLine = lineNumber;
 
     while (currentLine >= 0) {
         let line = document.lineAt(currentLine).text.trim();
         const nextLine = currentLine + 1 < document.lineCount ? document.lineAt(currentLine + 1).text.trim() : '';
 
         line = line + " " + nextLine;
-        // console.debug(line)
 
         const blockName = isScriptBlockLine(line);
         if (blockName) {
           // check the line has { or the next line has {
-          if (line.endsWith('{')) {
-            console.debug("Detected " + blockName + " block");            
+          if (line.endsWith('{')) {        
             return blockName;
           } else {
             const nextLineNum = currentLine + 1;
             if (nextLineNum < document.lineCount) {
               const nextLine = document.lineAt(nextLineNum).text.trim();
-              if (nextLine.startsWith('{')) {
-                console.debug("Detected " + blockName + " block");                
+              if (nextLine.startsWith('{')) {            
                 return blockName;
               }
             }
           }
-
-
-          console.debug("Detected " + blockName + " block");            
+         
           return blockName;
         }
         currentLine--;
@@ -73,7 +68,7 @@ function getScriptBlockDescription(blockType: string): string | null {
     if (blockData.description) {
       return blockData.description;
     } else {
-      return "No description available for script block type.";
+      return "No description available for this script block type.";
     }
   }
   return null;
@@ -83,17 +78,14 @@ function getScriptBlockDescription(blockType: string): string | null {
 function getParameterDescription(word: string, blockType: string): string | null {
   // check if word is a parameter of the block type
   const blockData = SCRIPTS_TYPES[blockType as keyof typeof SCRIPTS_TYPES];
-  console.debug("blockData:", blockData);
   const lowerWord = word.toLowerCase();
   if (blockData.parameters && lowerWord in blockData.parameters) {
-    console.debug("Found parameter:", lowerWord);
     const paramData = (blockData.parameters as Record<string, any>)[lowerWord];
     if (paramData) {
-      console.debug("Parameter description:", paramData.description);
       if (paramData.description) {
         return paramData.description;
       } else {
-        return "No description available for parameter.";
+        return "No description available for this parameter.";
       }
     }
   }
@@ -710,7 +702,7 @@ export const PROPERTY_DESCRIPTIONS: { [key: string]: string } = {
   RequiresEquippedBothHands: "Needs both hands to use\n*Values*: `true/false`",
 };
 
-export const CRAFT_RECIPE_DESCRIPTIONS: { [key: string]: string } = {
+const CRAFT_RECIPE_DESCRIPTIONS: { [key: string]: string } = {
   time: "Crafting time in seconds\n*Example*: `Time = 120.0,`",
   result: 'Output item\n*Example*: `Result = "Base.WoodenPlank",`',
   resultcount: "Number of items produced\n*Example*: `ResultCount = 4,`",
@@ -724,7 +716,7 @@ export const CRAFT_RECIPE_DESCRIPTIONS: { [key: string]: string } = {
 };
 
 
-export const FLAG_DESCRIPTIONS : { [key: string]: string } = {
+const FLAG_DESCRIPTIONS : { [key: string]: string } = {
   MayDegradeLight : "There's a small chance of damaging the item used",
   Prop1: "Will be in the primary hand",
   Prop2: "Will be in the secondary hand",

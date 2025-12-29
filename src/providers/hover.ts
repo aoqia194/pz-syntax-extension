@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { Position, TextDocument } from "vscode";
-import { PROPERTY_DESCRIPTIONS, CRAFT_RECIPE_DESCRIPTIONS, getBlockType, getDescription } from "../models/constants";
+import { getBlockType, getDescription } from "../models/constants";
 import { provideDefinition } from "./definition";
 import path from "path";
 import { itemBlockRegex } from "../models/regexPatterns";
@@ -16,17 +16,15 @@ export class PZHoverProvider implements vscode.HoverProvider {
     if (!range) return null;
 
     const word = document.getText(range);
-    const lowerWord = word.toLowerCase();
+    // const lowerWord = word.toLowerCase();
 
     // check in a block type, else skip hover
-    const blockType = getBlockType(document, position);
-    
-    console.debug("Hover requested for word:", word, "in block type:", blockType);
-    
+    const blockType = getBlockType(document, position.line);
     if (!blockType) {
       return null;
     }
 
+    // verify if the word is the script block or just a parameter
     const isScriptBlock = word == blockType;
     const desc = getDescription(word, blockType, isScriptBlock);
 
@@ -34,11 +32,12 @@ export class PZHoverProvider implements vscode.HoverProvider {
     if (desc) {
       const markdown = new vscode.MarkdownString();
 
+      // format script block and parameters with extension colors
       markdown.isTrusted = true;
       const controlColor = getColor(ThemeColorType.ScriptBlock);
-
       const blockText = this.colorMarkdown(blockType, controlColor);
 
+      // title is different for script block vs parameter
       if (isScriptBlock) {
         markdown.appendMarkdown(blockText + '  \n');
       } else {
@@ -48,7 +47,7 @@ export class PZHoverProvider implements vscode.HoverProvider {
       }
       markdown.appendMarkdown('\n\n---\n\n');
 
-      // markdown.appendMarkdown(`**${word}** ${blockType}  \n`);
+      // description
       markdown.appendMarkdown(desc);
       return new vscode.Hover(markdown);
     }
@@ -66,16 +65,16 @@ export class PZHoverProvider implements vscode.HoverProvider {
       const locations = await provideDefinition(document, position, token);
       if (!locations || !Array.isArray(locations) || locations.length === 0) {
         return new vscode.Hover(
-          `Aucune définition trouvée pour ${fullItemName}`
+          `No definition found for ${fullItemName}`
         );
       }
 
-      // Récupérer et formater le contenu
+      // Retrieve and format the content
       const contents = new vscode.MarkdownString();
       contents.appendMarkdown(`### ${fullItemName}\n`);
 
       for (const location of locations.slice(0, 3)) {
-        // Limite à 3 résultats
+        // Limit to 3 results
         const doc = await vscode.workspace.openTextDocument(location.uri);
         const itemContent = this.extractItemContent(doc, location.range.start);
 
