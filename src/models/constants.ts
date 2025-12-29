@@ -51,28 +51,37 @@ export function getBlockType(document: TextDocument, position: Position): string
 }
 
 
+export function isScriptBlock(word: string): boolean {
+  return word in SCRIPTS_TYPES;
+}
 
-export function getDescription(word: string, blockType: string): string | null {
-  console.debug("Getting description for word (", word, ") in block type (", blockType, ")");
-  // first check if word is a script block type
-  if (word == blockType) {
-    console.debug("Found word as block type:", word);
-    const blockData = SCRIPTS_TYPES[blockType as keyof typeof SCRIPTS_TYPES];
-    if (blockData) {
-      if (blockData.description) {
-        return blockData.description;
-      } else {
-        return "No description available for script block type.";
-      }
+
+export function getDescription(word: string, blockType: string, isScriptBlock: boolean): string | null {
+  if (isScriptBlock) {
+    return getScriptBlockDescription(blockType);
+  } else {
+    return getParameterDescription(word, blockType);
+  }
+
+  return null;
+}
+
+
+function getScriptBlockDescription(blockType: string): string | null {
+  const blockData = SCRIPTS_TYPES[blockType as keyof typeof SCRIPTS_TYPES];
+  if (blockData) {
+    if (blockData.description) {
+      return blockData.description;
+    } else {
+      return "No description available for script block type.";
     }
   }
-  
-  // const word_blockData = SCRIPTS_TYPES[word as keyof typeof SCRIPTS_TYPES];
-  // if (word_blockData && word_blockData.description) {
-  //   return word_blockData.description;
-  // }
+  return null;
+}
 
-  // then check if word is a parameter of the block type
+
+function getParameterDescription(word: string, blockType: string): string | null {
+  // check if word is a parameter of the block type
   const blockData = SCRIPTS_TYPES[blockType as keyof typeof SCRIPTS_TYPES];
   console.debug("blockData:", blockData);
   const lowerWord = word.toLowerCase();

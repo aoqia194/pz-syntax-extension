@@ -4,6 +4,7 @@ import { PROPERTY_DESCRIPTIONS, CRAFT_RECIPE_DESCRIPTIONS, getBlockType, getDesc
 import { provideDefinition } from "./definition";
 import path from "path";
 import { itemBlockRegex } from "../models/regexPatterns";
+import { getColor, ThemeColorType } from "../utils/themeColors";
 
 export class PZHoverProvider implements vscode.HoverProvider {
   async provideHover(
@@ -26,14 +27,30 @@ export class PZHoverProvider implements vscode.HoverProvider {
       return null;
     }
 
+    const isScriptBlock = word == blockType;
+    const desc = getDescription(word, blockType, isScriptBlock);
+
     // 1. Hover pour les propriétés (PROPERTY_DESCRIPTIONS)
-    const desc = getDescription(word, blockType);
-    console.debug(desc);
-    if (desc && desc.length > 0) {
-      const contents = new vscode.MarkdownString();
-      contents.appendMarkdown(`**${word}**  \n`);
-      contents.appendMarkdown(desc);
-      return new vscode.Hover(contents);
+    if (desc) {
+      const markdown = new vscode.MarkdownString();
+
+      markdown.isTrusted = true;
+      const controlColor = getColor(ThemeColorType.ScriptBlock);
+
+      const blockText = this.colorMarkdown(blockType, controlColor);
+
+      if (isScriptBlock) {
+        markdown.appendMarkdown(blockText + '  \n');
+      } else {
+        const paramColor = getColor(ThemeColorType.Parameter);
+        const wordText = this.colorMarkdown(word, paramColor);
+        markdown.appendMarkdown(`${wordText} (${blockText})  \n`);
+      }
+      markdown.appendMarkdown('\n\n---\n\n');
+
+      // markdown.appendMarkdown(`**${word}** ${blockType}  \n`);
+      markdown.appendMarkdown(desc);
+      return new vscode.Hover(markdown);
     }
 
     // 2. Hover pour les Base.ITEM
@@ -82,18 +99,8 @@ export class PZHoverProvider implements vscode.HoverProvider {
     return null;
   }
 
-  private getPropertyDescription(word: string, document: TextDocument, position: Position): string {
-    const blockType = getBlockType(document, position);
-    
-    if (blockType === 'item') {
-        return PROPERTY_DESCRIPTIONS[word] || "";
-    }
-    
-    if (blockType === 'craftRecipe') {
-        return CRAFT_RECIPE_DESCRIPTIONS[word] || "";
-    }
-    
-    return "";
+  private colorMarkdown(text: string, color: string): string {
+    return `<span style="color:${color};">${text}</span>`;
   }
 
   private extractItemContent(
