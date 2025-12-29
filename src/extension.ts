@@ -32,7 +32,7 @@ function handleOpenTextDocument(document: vscode.TextDocument) {
       console.debug(
         `Fichier ${document.fileName} détecté comme un fichier de script PZ (par pattern).`
       );
-      vscode.languages.setTextDocumentLanguage(document, "pz-scripting");
+      vscode.languages.setTextDocumentLanguage(document, "pz-scripts");
       return;
     }
 
@@ -44,7 +44,7 @@ function handleOpenTextDocument(document: vscode.TextDocument) {
       console.debug(
         `Fichier ${document.fileName} détecté comme un fichier de script PZ (par module).`
       );
-      vscode.languages.setTextDocumentLanguage(document, "pz-scripting");
+      vscode.languages.setTextDocumentLanguage(document, "pz-scripts");
     }
   }
 }
@@ -73,34 +73,34 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     watcher,
     vscode.workspace.onDidOpenTextDocument((document) => {
-      if (document.languageId === "pz-scripting") {
+      if (document.languageId === "pz-scripts") {
         diagnosticProvider.updateDiagnostics(document);
       }
     }),
     vscode.workspace.onDidChangeTextDocument((event) => {
-      if (event.document.languageId === "pz-scripting") {
+      if (event.document.languageId === "pz-scripts") {
         diagnosticProvider.updateDiagnostics(event.document);
       }
     }),
     vscode.languages.registerCompletionItemProvider(
-      "pz-scripting",
+      "pz-scripts",
       new PZCompletionItemProvider(),
       ".",
       " ",
       "\t" // Déclencheurs de complétion
     ),
     vscode.languages.registerHoverProvider(
-      "pz-scripting",
+      "pz-scripts",
       new PZHoverProvider()
     ),
 
     // format document with right click > Format document
-    vscode.languages.registerDocumentFormattingEditProvider("pz-scripting", {
+    vscode.languages.registerDocumentFormattingEditProvider("pz-scripts", {
       provideDocumentFormattingEdits,
     }),
 
     // apparently used when ctrl + click something
-    vscode.languages.registerDefinitionProvider("pz-scripting", {
+    vscode.languages.registerDefinitionProvider("pz-scripts", {
       provideDefinition,
     })
   );

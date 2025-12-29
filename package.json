@@ -1,9 +1,9 @@
 {
-  "name": "pz-syntax-extension",
-  "displayName": "Project Zomboid Script Support",
-  "description": "A Visual Studio Code extension for Project Zomboid file format (items and recipes) syntax highlighting and formatting.",
-  "version": "0.2.9",
-  "publisher": "cyberbobjr",
+  "name": "project-zomboid-scripts",
+  "displayName": "Project Zomboid Scripts",
+  "description": "A Visual Studio Code extension to aid in editing Project Zomboid script files.",
+  "version": "1.0.0",
+  "publisher": "SimKDT",
   "engines": {
     "vscode": "^1.75.0"
   },
@@ -14,13 +14,13 @@
   "editor.semanticHighlighting.enabled": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/cyberbobjr/pz-syntax-extension"
+    "url": "https://github.com/SirDoggyJvla/pz-syntax-extension"
   },
   "icon": "images/pz-script.png",
   "contributes": {
     "configuration": {
       "type": "object",
-      "title": "PZ Syntax Extension",
+      "title": "Project Zomboid Script",
       "properties": {
         "pzSyntaxExtension.searchDirectories": {
           "type": "array",
@@ -46,7 +46,7 @@
     },
     "languages": [
       {
-        "id": "pz-scripting",
+        "id": "pz-scripts",
         "aliases": [
           "Project Zomboid Script",
           "pz-script"
@@ -57,9 +57,9 @@
     ],
     "grammars": [
       {
-        "language": "pz-scripting",
+        "language": "pz-scripts",
         "scopeName": "source.pz-script",
-        "path": "./syntaxes/pz-scripting.tmLanguage.json"
+        "path": "./syntaxes/pz-scripts.tmLanguage.json"
       }
     ],
     "semanticTokenScopes": [

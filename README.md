@@ -29,7 +29,7 @@ The supported version of Project Zomboid is b42.
 ## Changelog
 - v0.2.9 - Add new properties for item
 - v0.2.8 - Fix bug when formatting fixing script
-- v0.2.7 - Add a new setting 'pzFilenames' which you can specify filename that must be treated like a 'pz-scripting' file, regex allowed
+- v0.2.7 - Add a new setting 'pzFilenames' which you can specify filename that must be treated like a 'pz-scripts' file, regex allowed
 - v0.2.5 - Better file extension support, now .txt files are recognized ad PZ file only if 'module XXXX {' is at beginning of the file
 - v0.2.4 - Add missing properties for clothing & cooking & fix hilighting of craftRecipe name
 - v0.2.3 - Add missing properties for items, refactor all the code for detecting bloc, add a syntax checker for missing comma
@@ -44,10 +44,10 @@ You can find the source code and contribute to this project on GitHub:
 
 ## Configuration
 By default the Project Zomboid directory is "C:\Program Files (x86)\Steam\steamapps\common\ProjectZomboid\media\scripts", but you can change this in the settings of the extension.
-You can add custom filename if you want they be detected as "pz-scripting" file
+You can add custom filename if you want they be detected as "pz-scripts" file
 
 ## Known issues
-Sometime items/craftRecipe files are not detected as pz-scripting, in this case close them all.
+Sometime items/craftRecipe files are not detected as pz-scripts, in this case close them all.
 
 ## Installation if you want to evolve or fix the extension
 
